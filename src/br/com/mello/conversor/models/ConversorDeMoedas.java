@@ -2,15 +2,15 @@ package br.com.mello.conversor.models;
 
 public class ConversorDeMoedas {
     private Moeda primeiraMoeda;
-    private Moeda segundaMoeda;
+    private String segundaMoedaCod;
 
-    public void adicionarMoedas(Moeda m1, Moeda m2){
+    public void adicionarMoedas(Moeda m1, String m2Cod){
         this.primeiraMoeda = m1;
-        this.segundaMoeda = m2;
+        this.segundaMoedaCod = m2Cod;
     }
 
     public double converter(){
-        double conversao = primeiraMoeda.getPossibilidades().get(segundaMoeda.getCodigo());
+        double conversao = primeiraMoeda.getPossibilidades().get(segundaMoedaCod);
         return conversao * primeiraMoeda.getQuantidade();
     }
 
@@ -19,6 +19,6 @@ public class ConversorDeMoedas {
         return String.format("""
                 Primeira moeda: %s
                 Segunda moeda: %s
-                """, this.primeiraMoeda, this.segundaMoeda);
+                """, this.primeiraMoeda.getCodigo(), this.segundaMoedaCod);
     }
 }
