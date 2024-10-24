@@ -1,28 +1,16 @@
 package br.com.mello.conversor.models;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Moeda {
-    private String codigo;
-    private String retorno;
+    private final String codigo;
+    private final Map<String, Double> possibilidades;
     private double quantidade;
-    private double valor;
-    private Map<String, Double> valores;
-    private Map<String, Double> possibilidades;
 
 
     public String getCodigo() {
         return codigo;
-    }
-
-    public String getRetorno() {
-        return retorno;
-    }
-
-    public double getValor() {
-        return valor;
     }
 
     public double getQuantidade() {
@@ -35,12 +23,10 @@ public class Moeda {
 
     public Moeda(MoedaApi moedaApi){
         this.quantidade = 1;
-        this.retorno = moedaApi.result();
         this.codigo = moedaApi.base_code();
+        this.possibilidades = new HashMap<>();
 
-        this.possibilidades = HashMap.newHashMap(6);;
-        this.valores = HashMap.newHashMap(161);
-        valores.putAll(moedaApi.conversion_rates());
+        Map<String, Double> valores = new HashMap<>(moedaApi.conversion_rates());
 
         possibilidades.put("ARS", valores.get("ARS"));
         possibilidades.put("BOB", valores.get("BOB"));
@@ -48,9 +34,6 @@ public class Moeda {
         possibilidades.put("CLP", valores.get("CLP"));
         possibilidades.put("COP", valores.get("COP"));
         possibilidades.put("USD", valores.get("USD"));
-
-        this.valor = possibilidades.get(this.codigo);
-
     }
 
     public void setQuantidade(double quantidade) {
@@ -59,6 +42,6 @@ public class Moeda {
 
     @Override
     public String toString() {
-        return String.format("[Sys] %s (%s) - quantidade: %s", this.valor, this.codigo, this.quantidade);
+        return String.format("%s (%s)", this.quantidade, this.codigo);
     }
 }

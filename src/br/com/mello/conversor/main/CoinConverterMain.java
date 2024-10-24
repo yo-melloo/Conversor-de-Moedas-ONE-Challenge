@@ -7,8 +7,12 @@ import br.com.mello.conversor.models.ConversorDeMoedas;
 public class CoinConverterMain {
     public static void main(String[] args) {
         CoinConverterMenu menu = new CoinConverterMenu();
+        ConversorDeMoedas conversor = new ConversorDeMoedas();
+        boolean exec = true;
 
-        menu.exibirMenu();
+        while (exec) {
+            exec = menu.iniciarMenu();
+        }
 
     }
 }

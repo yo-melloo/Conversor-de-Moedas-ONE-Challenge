@@ -10,12 +10,13 @@ import java.net.http.HttpResponse;
 
 public class ExchangeRateAPI {
     //Importando Chave da Api para a IDE
-    private String chaveDaApi = System.getenv("API_KEY");
+    private final String chaveDaApi = System.getenv("API_KEY");
 
     public Moeda consultarAPI(String codigoMoeda){
 
         //Preparando API
         System.out.println("Realizando pesquisa para: " + codigoMoeda);
+
         //Montando URI
         String uriDaApi = String.format("https://v6.exchangerate-api.com/v6/%s/latest/%s", chaveDaApi, codigoMoeda);
 
@@ -44,6 +45,7 @@ public class ExchangeRateAPI {
         catch (Exception e) {
             //exibir mensagem de exceção
             System.out.println("Erro ao acessar a API: " + e.getMessage());
+            System.out.println(e.getLocalizedMessage());
             //-- A primeira vista não ocorre nenhuma exceção na aplicação até o momento
             //-- é estranho? pra caramba.
             return null;
