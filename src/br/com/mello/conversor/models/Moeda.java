@@ -6,8 +6,6 @@ import java.util.Map;
 
 public class Moeda {
     private String codigo;
-    private String nome;
-    private String pais;
     private String retorno;
     private double quantidade;
     private double valor;
@@ -17,14 +15,6 @@ public class Moeda {
 
     public String getCodigo() {
         return codigo;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public String getPais() {
-        return pais;
     }
 
     public String getRetorno() {
