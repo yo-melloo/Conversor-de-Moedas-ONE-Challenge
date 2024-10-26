@@ -3,7 +3,7 @@
 <div align="center">
 
 ![licensa do repositorio](https://img.shields.io/badge/LICENSA-MIT-blue)
-![status do projeto](https://img.shields.io/badge/STATUS-EM%20DESENVOLVIMENTO-GREEN)
+![status do projeto](https://img.shields.io/badge/STATUS-FINALIZADO-GREEN)
 ![estrelas do projeto](https://img.shields.io/github/stars/yo-melloo?style=social)
 
 Este projeto é um desafio proposto pelo programa ONE (Oracle Next Education) para consolidação e avaliação de conhecimentos em Java. Pondo em prática noções básicas de manipulação de APIs e Orientação a Objetos. Trata-se de um conversor de moedas, que consulta dados atualizados em tempo real na internet e realiza conversão solicitada para o usuário.
@@ -17,10 +17,8 @@ Este projeto é um desafio proposto pelo programa ONE (Oracle Next Education) pa
 * [Funcionalidades e Tecnologias utilizddas](#Funcionalidades-e-Tecnologias-utilizadas)
 * [Autores do Projeto](#Autores-do-projeto)
 
-***
-
-## ✔︎ Funcionalidades e Tecnologias utilizadas;
-### Funcionalidades
+## ✔︎ Funcionalidades e Tecnologias utilizadas
+### Funcionalidades:
 - `Conversão de moedas geral`: A aplicação dispõe de alguma escolhas de conversão rápidas, que são pré-programadas para interação com a API de cotação (oque indiretamente miniminiza as chances de erro).
 - `Conversão de moedas extra`: Ainda é possível realizar uma conversão com moedas não dispostas no menu (oque significa que pode ocorrer erros na busca de uma moeda específica).
 - `Histórico de conversão`: Após a primeira conversão, a qualquer momento no menu é possível acessar o histórico de conversões da sessão atual, ao finalizar a aplicação, é disponibilizado um arquivo .txt com o histórico.
@@ -31,8 +29,8 @@ Este projeto é um desafio proposto pelo programa ONE (Oracle Next Education) pa
 - `java.time`: Utilizado na escrita do histórico, para ajudar a determinar quando a conversão relatada se fez válida.
 - `InetAddress`: Utilizado na leitura do nome do dispositivo, servindo apenas para identificar o usuário e rotular o arquivo gerado para o histórico.
 
-## 📂 Acesso ao projeto:
-### Clonando repositório e configurando projeto
+## 📂 Acesso ao projeto
+### Clonando repositório e configurando projeto:
 
 * Clone o repositório:
 
@@ -44,7 +42,7 @@ Este projeto é um desafio proposto pelo programa ONE (Oracle Next Education) pa
 * Configure a sua variável de ambiente `"API_KEY"` com o valor da chave de acesso do passo anterior;
 * Compile e execute o programa pelo método principal localizado em `br.com.mello.conversor.main.CoinConverterAppPlay`.
 
-## 👤 Autores do projeto.
+## 👤 Autores do projeto
 
 <div align="center">
 
@@ -55,3 +53,6 @@ Este projeto é um desafio proposto pelo programa ONE (Oracle Next Education) pa
 "Meu octocat não parece comigo (ainda)"
 
 </div>
+
+## Consideração final:
+* O projeto cumpriu o desafio proposto, mas vou continuar adicionando e melhorando funções dele para melhorar minhas habilidades.
