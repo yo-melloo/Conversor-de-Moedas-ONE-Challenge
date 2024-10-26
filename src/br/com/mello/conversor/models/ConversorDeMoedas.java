@@ -2,8 +2,8 @@ package br.com.mello.conversor.models;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -14,6 +14,23 @@ public class ConversorDeMoedas {
     private Moeda primeiraMoeda;
     private String segundaMoedaCod;
     private String conversaoAtualString;
+    Relogio relogio = new Relogio();
+    String userName = "Usuário";
+
+    public ConversorDeMoedas() {
+        try {
+            InetAddress informacoesPC = InetAddress.getLocalHost();
+            this.userName = informacoesPC.getHostName();
+
+        } catch (
+                UnknownHostException e) {
+            System.out.println("não é possível acessar o nome do computador.");
+        }
+    }
+
+    public String getUserName() {
+        return userName;
+    }
 
     public ArrayList<String> getHistoricoDeConversoes() {
         return historicoDeConversoes;
@@ -23,78 +40,92 @@ public class ConversorDeMoedas {
         this.primeiraMoeda = primeiraMoeda;
     }
 
-    public double converter(Moeda primeiraMoeda, String segundaMoedaCodigo) {
-        this.primeiraMoeda = primeiraMoeda;
-        this.segundaMoedaCod = segundaMoedaCodigo;
-
-        double equivalencia = this.primeiraMoeda.getPossibilidades().get(this.segundaMoedaCod);
-        return equivalencia * this.primeiraMoeda.getQuantidade();
-    }
-
-    public void realizarConsultaNaAPI(String codigoMoedaPrimaria, String codigoMoedaSecundaria) {
-        //Define moeda
-        this.setPrimeiraMoeda(consulta.consultarAPI(codigoMoedaPrimaria));
-
-        //Define valor
-        System.out.print("Quanto " + codigoMoedaPrimaria + " deseja converter para " + codigoMoedaSecundaria + "?\n@ ");
-        double valorDeConversao = this.entrada.nextDouble();
-        this.entrada.nextLine();
-        this.primeiraMoeda.setQuantidade(valorDeConversao);
-        System.out.println("* Definido: " + this.primeiraMoeda + "\n");
-        //conversor.setValorDeConversao(valorDeConversao);
-
-        double resultado = this.converter(this.primeiraMoeda, codigoMoedaSecundaria);
-
-        //Importando e formatando data e hora para geração de logs ao final
-        LocalDateTime dataEhora = LocalDateTime.now(); // pega "agora"
-        DateTimeFormatter formatacaoPadrao = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-        DateTimeFormatter formatacaoSimples = DateTimeFormatter.ofPattern("dd-MM HH:mm:ss");
-
-        String dataFormatada = String.format("[%s]", dataEhora.format(formatacaoPadrao));
-        String dataEhoraFormatadas = String.format("[%s]", dataEhora.format(formatacaoSimples));
+    public void converter() {
+        //realiza calculo de conversão acessando os valores na primeira moeda
+        double resultado = this.primeiraMoeda.getPossibilidades().get(this.segundaMoedaCod) * this.primeiraMoeda.getQuantidade();
 
         //Exibindo resultado para o usuário - log
-        System.out.println("[Sys] Resultado:");
+
+        System.out.println("\n######################################\n");
+
+        System.out.println("[Sys] Resultado:\n");
+        Double cotacao = this.primeiraMoeda.getPossibilidades().get(this.segundaMoedaCod);
+        System.out.printf("%s Cotação atual: 1 %s = %s %s%n", relogio.getDataEHoraFormatacaoSimples(), this.primeiraMoeda.getCodigo(), cotacao, segundaMoedaCod);
+
         System.out.printf(
-                "%s %s %s convertidos em %s equivalem a apróx.: %.2f %s%n%n",
-                dataEhoraFormatadas,
+                "%s %s %s convertidos em %s = %.2f %s (aprox.)%n%n",
+                relogio.getDataEHoraFormatacaoSimples(),
                 this.primeiraMoeda.getQuantidade(),
                 this.primeiraMoeda.getCodigo(),
-                codigoMoedaSecundaria,
+                segundaMoedaCod,
                 resultado,
-                codigoMoedaSecundaria
+                segundaMoedaCod
         );
 
         //retorno para ser adicionado ao histórico
-        this.conversaoAtualString = String.format("%s %.2f %s ---> %.2f %s%n", dataFormatada, this.primeiraMoeda.getQuantidade(), this.primeiraMoeda.getCodigo(), resultado, codigoMoedaSecundaria);
+        this.conversaoAtualString = String.format("%s %.2f %s = %.2f %s%n", relogio.getDataEHoraFormatacaoPadrao(), this.primeiraMoeda.getQuantidade(), this.primeiraMoeda.getCodigo(), resultado, segundaMoedaCod);
         this.armazenarConversaoNoHistorico();
     }
 
-    public void armazenarConversaoNoHistorico() {
-        this.historicoDeConversoes.add(conversaoAtualString);
-        System.out.println("** Conversão adicionada no histórico...\n");
+    public void realizarConsultaNaAPI(String codigoMoedaPrimaria, String codigoMoedaSecundaria, boolean conversaoPersonalizada) {
+        //Define moeda
+        this.setPrimeiraMoeda(consulta.consultarAPI(codigoMoedaPrimaria));
+        this.segundaMoedaCod = codigoMoedaSecundaria;
 
-        //Testa registrar no historicoDaUltimaSessao.txt
-        try {
-            FileWriter escritaTXT = new FileWriter("historicoDaUltimaSessão.txt");
+        if (this.primeiraMoeda != null) {
+            if (conversaoPersonalizada){
+                System.out.print("Qual o código da moeda para qual você irá converter os " + codigoMoedaPrimaria + "?\n3 letras @ ");
+                this.segundaMoedaCod = entrada.nextLine();
+                System.out.println("Segunda moeda: " + this.segundaMoedaCod);
 
-            //Percorre a lista escrevendo cada item como uma linha
-            for (String i : this.historicoDeConversoes) {
-                escritaTXT.write(i);
+                if (this.primeiraMoeda.getPossibilidades().get(this.segundaMoedaCod) == null){
+                    System.out.printf("[Sys error] Erro, "+ this.segundaMoedaCod + " não é uma moeda válida. Tente:\n");
+                    for (String letras: this.primeiraMoeda.getPossibilidades().keySet()) {
+                        System.out.println("* " + letras);
+                    }
+                }
             }
-            escritaTXT.close();
-        } catch (IOException e) {
-            System.out.println("Não foi possível acessar o arquivo especificado: " + e.getMessage());
+
+            //Define valor da conversão/primeira moeda
+            System.out.print("Quanto " + codigoMoedaPrimaria + " deseja converter para " + this.segundaMoedaCod + "?\n@ ");
+            double valorDeConversao = this.entrada.nextDouble();
+            this.entrada.nextLine();
+            this.primeiraMoeda.setQuantidade(valorDeConversao);
+            System.out.println("* Definido: " + this.primeiraMoeda + "\n");
+        } else {
+            System.out.println("Voltando para o menu principal...\n");
         }
     }
 
+        public void armazenarConversaoNoHistorico() {
+            this.historicoDeConversoes.add(conversaoAtualString);
+            System.out.println("** Conversão adicionada no histórico...\n");
 
-    @Override
-    public String toString() {
-        return String.format("""
+            String nomeDoArquivo = String.format("%s %s conversões", relogio.getDataApenas(), this.userName);
+
+            //Testa registrar no historicoDaUltimaSessao.txt
+            try {
+                FileWriter escritaTXT = new FileWriter(nomeDoArquivo + ".txt");
+
+                //Percorre a lista escrevendo cada item como uma linha
+                int is = 1;
+                for (String i : this.historicoDeConversoes) {
+                    escritaTXT.write(is + ". " + i);
+                    is++;
+                }
+                escritaTXT.close();
+            } catch (IOException e) {
+                System.out.println("Não foi possível acessar o arquivo especificado: " + e.getMessage());
+            }
+        }
+
+
+        @Override
+        public String toString() {
+            return String.format("""
                 Atualmente no conversor:
                 Primeira moeda: %s
                 Segunda moeda: %s
                 """, this.primeiraMoeda.getCodigo(), this.segundaMoedaCod);
+        }
     }
-}

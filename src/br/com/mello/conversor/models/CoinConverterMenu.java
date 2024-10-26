@@ -1,34 +1,20 @@
 package br.com.mello.conversor.models;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class CoinConverterMenu {
     private final ConversorDeMoedas conversor = new ConversorDeMoedas();
     private final Scanner entradaMenu = new Scanner(System.in);
-    private String userName;
     private String codigoMoedaPrimaria = "";
     private String codigoMoedaSecundaria = "";
 
     //Ao inicializar o menu
     //Obtem o nome do PC para o definir como nome de usuário
     public CoinConverterMenu(){
-        try {
-            InetAddress informacoesPC = InetAddress.getLocalHost();
-            this.userName = informacoesPC.getHostName();
-        } catch (
-                UnknownHostException e) {
-            this.userName = "";
-
-            System.out.println("não é possível acessar o nome do computador.");
-        }
     }
 
     public boolean iniciarMenu() {
-        //Numero definido para encerrar o loop
-        int numeroFinal = 8;
-
         System.out.println(
                 """
                         @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -44,66 +30,88 @@ public class CoinConverterMenu {
                         4) Real Brasileiro em Dólar Americano.
                         5) Dólar Americano em Peso Colombiano.
                         6) Peso Colombiano em Dólar Americano.
-                        7) Acessar histórico.
-                        8) Sair.
+                        7) Outras moedas.
+                        8) Acessar histórico.
+                        9) Sair.
                         
                         """
         );
 
+        //Numero definido para encerrar o loop
+        int numeroFinal = 9;
+
         //Entrada do usuário
+        int escolha = 0;
         System.out.print("Escolha uma opção: @ ");
-        int escolha = entradaMenu.nextInt();
+
+        try {
+            escolha = entradaMenu.nextInt();
+        } catch (InputMismatchException e) {
+            System.out.println("Entrada inválida");
+            System.out.println("Tente novamente.");
+        }
+
         entradaMenu.nextLine();
         System.out.println("\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
         if (escolha == numeroFinal) {
             return false;
-
+        } else if (escolha == 0) {
+            return true;
+        } else if (escolha <= 7) {
+            boolean conversaoPersonalizada = false;
             //Determina moedas a serem convertidas
             //-- se a escolha estiver entre as opçoes de conversão
             //-- configura as moedas para prosseguir para o conversor
-        } else if (escolha <= 6) {
             if (escolha == 1) {
                 codigoMoedaPrimaria = "USD";
                 codigoMoedaSecundaria = "ARS";
                 System.out.println("Conversão selecionada: ");
-                System.out.println("1. Dólar Americano em Peso Argentino\n");
+                System.out.println(escolha + ". Dólar Americano em Peso Argentino\n");
 
             } else if (escolha == 2) {
                 codigoMoedaPrimaria = "ARS";
                 codigoMoedaSecundaria = "USD";
                 System.out.println("Conversão selecionada: ");
-                System.out.println("2. Peso Argentino em Dólar Americano\n");
+                System.out.println(escolha + ". Peso Argentino em Dólar Americano\n");
 
             } else if (escolha == 3) {
                 codigoMoedaPrimaria = "USD";
                 codigoMoedaSecundaria = "BRL";
                 System.out.println("Conversão selecionada: ");
-                System.out.println("3. Dólar Americano em Real Brasileiro\n");
+                System.out.println(escolha + ". Dólar Americano em Real Brasileiro\n");
 
             } else if (escolha == 4) {
                 codigoMoedaPrimaria = "BRL";
                 codigoMoedaSecundaria = "USD";
                 System.out.println("Conversão selecionada: ");
-                System.out.println("4. Real Brasileiro em Dólar Americano\n");
+                System.out.println(escolha + ". Real Brasileiro em Dólar Americano\n");
 
             } else if (escolha == 5) {
                 codigoMoedaPrimaria = "USD";
                 codigoMoedaSecundaria = "COP";
                 System.out.println("Conversão selecionada: ");
-                System.out.println("5. Dólar Americano em Peso Colombiano\n");
+                System.out.println(escolha + ". Dólar Americano em Peso Colombiano\n");
 
             } else if (escolha == 6) {
                 codigoMoedaPrimaria = "COP";
                 codigoMoedaSecundaria = "USD";
                 System.out.println("Conversão selecionada: ");
-                System.out.println("6. Peso Colombiano em Dólar Americano\n");
-            }
+                System.out.println(escolha + ". Peso Colombiano em Dólar Americano\n");
 
+            } else if (escolha == 7) {
+                System.out.println("Conversão selecionada: ");
+                System.out.println("7. Outras moedas (Conversão personalizada).");
+                System.out.print("Qual o código da primeira moeda?\n3 letras @ ");
+                codigoMoedaPrimaria = entradaMenu.nextLine();
+                conversaoPersonalizada = true;
+            }
+            System.out.println("--------------------------------------\n");
             //Prossegue para a API
-            conversor.realizarConsultaNaAPI(codigoMoedaPrimaria,codigoMoedaSecundaria);
-            //return true;
-        } else if (escolha == 7) {
+            conversor.realizarConsultaNaAPI(codigoMoedaPrimaria, codigoMoedaSecundaria, conversaoPersonalizada);
+            conversor.converter();
+
+        } else if (escolha == 8) {
 
             System.out.println("------------------------------------\n");
             System.out.println("[Sys] Aguarde... Acessando histórico.\n");
@@ -112,17 +120,18 @@ public class CoinConverterMenu {
             //Acessa historico diretamente do conversor
 
             if (!conversor.getHistoricoDeConversoes().isEmpty()) {
-                System.out.println("\nHistórico de conversões de " + userName + ":\n");
+                System.out.println("\nHistórico de conversões de " + conversor.getUserName() + ":\n");
+                int is = 1;
                 for (String i : conversor.getHistoricoDeConversoes()) {
-                    System.out.println(i);
+                    System.out.print(is + ". " + i);
+                    is++;
                 }
+                System.out.println("\n");
 
             } else {
                 System.out.println("[Sys error] Desculpe, parece que seu histórico está vazio...\n");
                 System.out.println("Voltando ao menu principal...\n");
             }
-        } else{
-            System.out.println("Erro: Opção inválida.\n");
         }
         return true;
     }

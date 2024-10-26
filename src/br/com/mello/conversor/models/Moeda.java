@@ -28,12 +28,10 @@ public class Moeda {
 
         Map<String, Double> valores = new HashMap<>(moedaApi.conversion_rates());
 
-        possibilidades.put("ARS", valores.get("ARS"));
-        possibilidades.put("BOB", valores.get("BOB"));
-        possibilidades.put("BRL", valores.get("BRL"));
-        possibilidades.put("CLP", valores.get("CLP"));
-        possibilidades.put("COP", valores.get("COP"));
-        possibilidades.put("USD", valores.get("USD"));
+        for (String cotacao: valores.keySet()){
+            possibilidades.put(cotacao, valores.get(cotacao));
+        }
+
     }
 
     public void setQuantidade(double quantidade) {

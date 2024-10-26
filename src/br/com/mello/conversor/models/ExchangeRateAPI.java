@@ -12,13 +12,13 @@ public class ExchangeRateAPI {
     //Importando Chave da Api para a IDE
     private final String chaveDaApi = System.getenv("API_KEY");
 
-    public Moeda consultarAPI(String codigoMoeda){
+    public Moeda consultarAPI(String codigoMoedaPrincipal){
 
         //Preparando API
-        System.out.println("Realizando pesquisa para: " + codigoMoeda);
+        System.out.println("[Sys] (Realizando pesquisa para: " + codigoMoedaPrincipal + ")\n");
 
         //Montando URI
-        String uriDaApi = String.format("https://v6.exchangerate-api.com/v6/%s/latest/%s", chaveDaApi, codigoMoeda);
+        String uriDaApi = String.format("https://v6.exchangerate-api.com/v6/%s/latest/%s", chaveDaApi, codigoMoedaPrincipal);
 
         //Montando Gson
         Gson gson = new GsonBuilder()
@@ -39,15 +39,22 @@ public class ExchangeRateAPI {
                     .send(request, HttpResponse.BodyHandlers.ofString());
             String jsonResponse = response.body();
             MoedaApi moedaRespostaDaAPI = gson.fromJson(jsonResponse, MoedaApi.class);
+            System.out.println("--------------------------------------\n");
             return new Moeda(moedaRespostaDaAPI);
         }
         //em caso de exceção
-        catch (Exception e) {
-            //exibir mensagem de exceção
-            System.out.println("Erro ao acessar a API: " + e.getMessage());
-            System.out.println(e.getLocalizedMessage());
-            //-- A primeira vista não ocorre nenhuma exceção na aplicação até o momento
-            //-- é estranho? pra caramba.
+        catch (NullPointerException e) {
+            System.out.println("[Sys error] Ocorreu um problema ao tentar pesquisar pelo código de moeda: " + codigoMoedaPrincipal);
+            System.out.println("O código de moeda é uma abreviação de 3 letras (ex.: Real Brasileiro = BRL)");
+            System.out.println("Voltando para o menu principal...\n");
+            return null;
+        } catch (IllegalStateException e) {
+            System.out.println("Houve um retorno inesperado por parte da aplicação. Tente novamente.");
+            System.out.println("Voltando para o menu principal...\n");
+            return null;
+        }catch (Exception e) {
+            //System.out.println(e);
+            System.out.println("Voltando para o menu principal...\n");
             return null;
         }
     }
