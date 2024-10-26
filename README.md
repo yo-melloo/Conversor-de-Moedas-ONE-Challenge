@@ -46,7 +46,8 @@ Este projeto é um desafio proposto pelo programa ONE (Oracle Next Education) pa
 
 <div align="center">
 
-<img src="https://github.com/user-attachments/assets/7c6bd326-3334-44f6-8817-bd187423012b" height="350"></img>
+<img src="https://github.com/user-attachments/assets/7c6bd326-3334-44f6-8817-bd187423012b" height="350" float="left" alt="octocat de Gustavo"></img>
+<img src="https://github.com/user-attachments/assets/3d1c3db8-290a-47b3-a3c3-63a298b324f8" height="185" float="right" alt="badge do desafio"></img>
 
 ### Gustavo Mello 🍫
 #### Aluno ONE, Turma 7
